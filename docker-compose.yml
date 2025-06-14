@@ -1,0 +1,8 @@
+services:
+  ai-code-reviewer:
+    build: .
+    container_name: ai-code-reviewer
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
