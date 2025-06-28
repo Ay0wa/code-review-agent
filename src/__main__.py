@@ -4,7 +4,9 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.core.config.app import AppSettings
+from core.config.app import AppSettings
+from core.container import Container
+from presentation.api.router import setup_routes
 
 app = FastAPI(
     title="AI Code Reviewer", description="API для ревью Python кода", version="1.0.0"
@@ -18,6 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+router = setup_routes()
+
 
 @app.get("/")
 async def root():
@@ -30,7 +34,12 @@ async def root():
     }
 
 
+app.include_router(router=router)
+
+
 if __name__ == "__main__":
+    container = Container()
+    container.wire(modules=["presentation.api.v1.code_review"])
     app_settings = AppSettings()
     uvicorn.run(
         app=app,
