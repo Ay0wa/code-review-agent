@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from src.domain.services.llm_service import LLMService
+from domain.services.llm_service import LLMService
 
 
 class ExplainIssueCommand(BaseModel):
@@ -13,6 +13,6 @@ class ExplainIssueUseCase:
         self._llm_service = llm_service
 
     def execute(self, command: ExplainIssueCommand) -> str:
-        return self._llm_service.explain_issue(
+        return self._llm_service.explain_issue_response(
             code=command.code, issue=command.issue_description
         )

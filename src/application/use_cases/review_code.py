@@ -1,18 +1,17 @@
+from typing import Any, Dict
+
 from pydantic import BaseModel
 
-from src.domain.entities.code_review import CodeReview
-from src.domain.services.llm_service import LLMService
+from core.interfaces.llm_service import ILLMService
 
 
-class ReviewCodeCommand(BaseModel):
+class FullReviewCodeCommand(BaseModel):
     code: str
-    context: str = ""
-    format: str = "detailed"
 
 
-class ReviewCodeUseCase:
-    def __init__(self, llm_service: LLMService):
+class FullReviewCodeUseCase:
+    def __init__(self, llm_service: ILLMService):
         self._llm_service = llm_service
 
-    def execute(self, command: ReviewCodeCommand) -> CodeReview:
-        return self._llm_service.review_code(code=command.code, context=command.context)
+    def execute(self, command: FullReviewCodeCommand) -> str:
+        return self._llm_service.full_code_review_response(code=command.code)

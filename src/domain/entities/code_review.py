@@ -18,6 +18,13 @@ class IssueType(Enum):
     SECURITY = "security"
 
 
+class Category(Enum):
+    DOCUMENATION = "documentation"
+    TESTING = "testing"
+    TYPING = "typing"
+    STYLE = "style"
+
+
 class Issue(BaseModel):
     description: str
     severity: Severity
@@ -28,7 +35,7 @@ class Issue(BaseModel):
 
 class Improvement(BaseModel):
     description: str
-    category: str
+    category: Category
     priority: int
 
 

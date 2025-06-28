@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.presentation.api.v1.code_review import router as code_review_router
+from presentation.api.v1.code_review import router as code_review_router
 
 
 def setup_routes() -> APIRouter:

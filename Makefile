@@ -24,15 +24,16 @@ dev-install: ## Установить все зависимости для раз
 	$(POETRY) install
 
 lint: ## Проверить код линтерами
-	$(POETRY) run flake8 $(CODE) --count --select=E9,F63,F7,F82 --show-source --statistics
-	$(POETRY) run flake8 $(CODE) --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
-	$(POETRY) run black --check --diff $(CODE)
-	$(POETRY) run isort --check-only --diff $(CODE)
+	$(POETRY) run ruff check $(CODE) --select=E9,F63,F7,F82 --show-files
+	$(POETRY) run ruff check $(CODE) --select=E
+	$(POETRY) run mypy $(CODE)
 	@echo ""
 
 format: ## Отформатировать код
 	$(POETRY) run black $(CODE)
+	$(POETRY) run autoflake --remove-all-unused-imports --remove-unused-variables --in-place --recursive $(CODE)
 	$(POETRY) run isort $(CODE)
+	$(POETRY) run ruff format $(CODE)
 
 test: ## Запустить тесты
 	$(POETRY) run pytest -v
@@ -41,7 +42,7 @@ test-coverage: ## Запустить тесты с покрытием
 	$(POETRY) run pytest --cov=$(CODE) --cov-report=html --cov-report=term-missing
 
 run-local: ## Запустить приложение локально
-	$(ENTRY_APP) run $(ENTRY_APP)
+	PYTHONPATH=src $(POETRY) run python -m src
 
 docker-build: ## Собрать Docker образ
 	docker build --no-cache -t $(DOCKER_IMAGE) .

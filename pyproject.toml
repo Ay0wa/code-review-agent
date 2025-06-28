@@ -3,6 +3,7 @@ name = "code-review-agent"
 version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
+packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -16,14 +17,26 @@ pydantic = "^2.11.7"
 pydantic-settings = "^2.9.1"
 python-dotenv = "^1.1.0"
 faiss-cpu = "^1.11.0"
-dependency-injector = "^4.47.1"
+mypy = "^1.16.1"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.2.0"
 black = "^25.1.0"
 isort = "^6.0.1"
 pylint = "^3.3.7"
+pytest = "^8.0.0"
+pytest-cov = "^4.0.0"
+autoflake = "^2.3.1"
+
+[tool.pytest.ini_options]
+testpaths = ["src/tests"]
+addopts = "-v --tb=short"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+mypy_path = "src"
+namespace_packages = true
+explicit_package_bases = true

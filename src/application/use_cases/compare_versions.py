@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from src.domain.services.llm_service import LLMService
+from domain.services.llm_service import LLMService
 
 
 class CompareVersionsCommand(BaseModel):
@@ -13,6 +13,6 @@ class CompareVersionsUseCase:
         self._llm_service = llm_service
 
     def execute(self, command: CompareVersionsCommand) -> str:
-        return self._llm_service.compare_versions(
+        return self._llm_service.compare_versions_response(
             original=command.original_code, improved=command.improved_code
         )

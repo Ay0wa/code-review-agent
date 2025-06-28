@@ -1,23 +1,19 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict
-
-from src.domain.entities.code_review import CodeReview
 
 
 class ILLMService(ABC):
-
     @abstractmethod
-    async def review_code(self, code: str, context: str = "") -> CodeReview:
+    def full_code_review_response(self, code: str) -> str:
         pass
 
     @abstractmethod
-    async def quick_check(self, code: str) -> Dict[str, Any]:
+    def quick_check_response(self, code: str) -> str:
         pass
 
     @abstractmethod
-    async def explain_issue(self, code: str, issue: str) -> str:
+    def explain_issue_response(self, code: str, issue: str) -> str:
         pass
 
     @abstractmethod
-    async def compare_versions(self, original: str, improved: str) -> str:
+    def compare_versions_response(self, original: str, improved: str) -> str:
         pass

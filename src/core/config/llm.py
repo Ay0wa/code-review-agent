@@ -1,8 +1,9 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import SecretStr
 
 
 class LLMSettings(BaseSettings):
-    openai_api_key: str = "example_key"
+    openai_api_key: SecretStr
     openai_model: str = "gpt-3.5-turbo"
     temperature: float = 0.1
     max_tokens: int = 2000

@@ -1,6 +1,6 @@
 import httpx
 
-from src.core.config.http import HTTPSettings
+from core.config.http import HTTPSettings
 
 
 def get_http_client() -> httpx.Client:

@@ -5,15 +5,21 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from src.application.use_cases.compare_versions import (CompareVersionsCommand,
-                                                        CompareVersionsUseCase)
-from src.application.use_cases.explain_issue import (ExplainIssueCommand,
-                                                     ExplainIssueUseCase)
-from src.application.use_cases.quick_check import (QuickCheckCommand,
-                                                   QuickCheckUseCase)
-from src.application.use_cases.review_code import (ReviewCodeCommand,
-                                                   ReviewCodeUseCase)
-from src.core.container import Container
+from application.use_cases.compare_versions import (
+    CompareVersionsCommand,
+    CompareVersionsUseCase,
+)
+from application.use_cases.explain_issue import (
+    ExplainIssueCommand,
+    ExplainIssueUseCase,
+)
+from application.use_cases.quick_check import QuickCheckCommand, QuickCheckUseCase
+from application.use_cases.review_code import (
+    FullReviewCodeCommand,
+    FullReviewCodeUseCase,
+)
+from core.container import Container
+from domain.services.llm_service import LLMService
 
 router = APIRouter(prefix="/v1/code-review", tags=["code-review"])
 
@@ -40,6 +46,10 @@ class CompareVersionsRequest(BaseModel):
     improved_code: str = Field(..., min_length=1, description="Улучшенная версия кода")
 
 
+class LLMResponse(BaseModel):
+    answer: str = Field(..., min_length=1, description="Ответ от LLM")
+
+
 class ApiResponse(BaseModel):
     success: bool
     data: Dict[str, Any] | None = None
@@ -51,43 +61,17 @@ class ApiResponse(BaseModel):
 @inject
 def review_code(
     request: ReviewRequest,
-    use_case: ReviewCodeUseCase = Depends(Provide[Container.review_code_use_case]),
+    use_case: FullReviewCodeUseCase = Depends(Provide[Container.review_code_use_case]),
 ) -> ApiResponse:
     """Полное ревью Python кода с детальным анализом"""
     try:
-        command = ReviewCodeCommand(
-            code=request.code, context=request.context, format=request.format
-        )
+        command = FullReviewCodeCommand(code=request.code)
 
         result = use_case.execute(command)
 
         return ApiResponse(
             success=True,
-            data={
-                "score": result.score,
-                "status": result.status,
-                "issues_count": len(result.issues),
-                "critical_issues": result.critical_issues_count,
-                "improvements_count": len(result.improvements),
-                "issues": [
-                    {
-                        "description": issue.description,
-                        "severity": issue.severity.value,
-                        "type": issue.issue_type.value,
-                        "line": issue.line_number,
-                        "suggestion": issue.suggestion,
-                    }
-                    for issue in result.issues
-                ],
-                "improvements": [
-                    {
-                        "description": imp.description,
-                        "category": imp.category,
-                        "priority": imp.priority,
-                    }
-                    for imp in result.improvements
-                ],
-            },
+            data=LLMResponse(answer=result).model_dump(),
         )
 
     except Exception as e:
@@ -105,8 +89,10 @@ def quick_check(
         command = QuickCheckCommand(code=request.code)
         result = use_case.execute(command)
 
-        return ApiResponse(success=True, data=result)
-
+        return ApiResponse(
+            success=True,
+            data=LLMResponse(answer=result).model_dump(),
+        )
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Ошибка быстрой проверки: {str(e)}"
