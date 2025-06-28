@@ -1,5 +1,3 @@
-from typing import Any, Dict
-
 from pydantic import BaseModel
 
 from core.interfaces.llm_service import ILLMService

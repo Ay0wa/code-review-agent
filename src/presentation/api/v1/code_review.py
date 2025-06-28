@@ -9,17 +9,13 @@ from application.use_cases.compare_versions import (
     CompareVersionsCommand,
     CompareVersionsUseCase,
 )
-from application.use_cases.explain_issue import (
-    ExplainIssueCommand,
-    ExplainIssueUseCase,
-)
+from application.use_cases.explain_issue import ExplainIssueCommand, ExplainIssueUseCase
 from application.use_cases.quick_check import QuickCheckCommand, QuickCheckUseCase
 from application.use_cases.review_code import (
     FullReviewCodeCommand,
     FullReviewCodeUseCase,
 )
 from core.container import Container
-from domain.services.llm_service import LLMService
 
 router = APIRouter(prefix="/v1/code-review", tags=["code-review"])
 

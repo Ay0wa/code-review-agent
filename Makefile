@@ -2,7 +2,7 @@
 
 CODE := src
 PYTHON := python
-POETRY := python -m poetry
+POETRY := poetry
 DOCKER_IMAGE := ai-code-reviewer:latest
 DOCKER_CONTAINER := ai-code-reviewer-app
 ENTRY_APP := $(POETRY) run python -m src
